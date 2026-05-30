@@ -1,0 +1,30 @@
+services:
+  n3xusdb:
+    image: timescale/timescaledb:latest-pg16
+    container_name: n3xusdb
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:5435:5432"
+    environment:
+      POSTGRES_PASSWORD: ${DB_SUPER_PASSWORD}
+      AUGUR_DB_PASSWORD: ${AUGUR_DB_PASSWORD}
+      TWN_DB_PASSWORD: ${TWN_DB_PASSWORD}
+      EVENTFLOW_DB_PASSWORD: ${EVENTFLOW_DB_PASSWORD}
+      SHARED_DB_PASSWORD: ${SHARED_DB_PASSWORD}
+      OMN1L1NK_DB_PASSWORD: ${OMN1L1NK_DB_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+networks:
+  n3xus-net:
+    name: n3xus-net
+    external: false
+
+volumes:
+  pgdata:
