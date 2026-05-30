@@ -397,3 +397,27 @@ Phase 6: Remote daemon deployment with failover (Week 4-5)
 - **WAL-G** — continuous archiving to S3-compatible storage (MinIO on OpsForge)
 - **Omn1L1nk HA** — multiple connector instances with `FOR UPDATE SKIP LOCKED`
 - **TLS for DB connections** — only needed if n3xusDB ever moves to a different machine
+
+---
+
+## Session History: 2026-05-30
+
+### n3xuslib created
+- `/home/w01f/projects/n3xuslib/` — shared daemon library with two modes:
+  - `direct`: asyncpg INSERT into event_outbox
+  - `http`: httpx POST to Omn1L1nk with SQLite fallback buffer + auto-flush
+- Configured via env vars: `N3XUSLIB_MODE`, `N3XUSLIB_ENDPOINT`, `N3XUSLIB_API_KEY`, `N3XUSLIB_DB_URL`
+
+### Daemon Integration
+- **LogSentry**: `n3xus.emit_alert()` wired into `_send_alert()` (daemon.py:490)
+- **EventFlow**: `n3xus.emit_event()` wired after Redis publish in `EventManager.create_event()`
+- **AlertFlow**: `AugurNotifier._emit_n3xus()` wired in `push_triage_result()` finally block
+
+### Pipeline Verified
+- Remote Ubuntu machine → n3xuslib HTTP mode → Omn1L1nk (`192.168.1.30:8100`) → event_outbox → poller → Augur
+- Event `Hello from Ubuntu` confirmed visible in Admin UI Queue tab
+
+### n3xus-deploy created
+- `/home/w01f/projects/n3xus-deploy/bootstrap.sh` — single-command bootstrap for SOC nodes
+- Distro-agnostic: auto-detects apt/dnf/pacman/etc, systemd or init.d fallback
+- Installs all 3 daemons via pipx, creates `/etc/n3xus/n3xus.env`, configures services, runs smoke test
