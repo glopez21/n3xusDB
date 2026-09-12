@@ -18,6 +18,14 @@ psql -v ON_ERROR_STOP=1 --username postgres <<-EOSQL
     \c eventflow_db
     CREATE EXTENSION IF NOT EXISTS timescaledb;
 
+    -- TheHive database
+    CREATE USER thehive_user WITH PASSWORD '${THEHIVE_DB_PASSWORD:-thehive}';
+    CREATE DATABASE thehive_db OWNER thehive_user;
+
+    -- Cortex database
+    CREATE USER cortex_user WITH PASSWORD '${CORTEX_DB_PASSWORD:-cortex}';
+    CREATE DATABASE cortex_db OWNER cortex_user;
+
     -- Phase 2
     -- CREATE USER logsentry_user WITH PASSWORD '${LOGSENTRY_DB_PASSWORD}';
     -- CREATE DATABASE logsentry_db OWNER logsentry_user;
