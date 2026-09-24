@@ -1,19 +1,17 @@
 # n3xusDB
 
-A from-scratch central time-series database for the SOC ecosystem, built in Rust with a WAL, segment store, and compaction.
+From-scratch embedded time-series engine — WAL, segment store, compaction, and soak benchmarks.
 
-## Intent
+**Intent**
 
-A single TimescaleDB-style backbone that unifies event storage across the whole SOC stack — LogSentry, EventFlow, AlertFlow, NetWatch, and friends write events here, and the Omn1L1nk connector fans them out to Augur, ThreatPulse, or any other hub. It removes the need for each project to bundle its own database container, eliminates redundant instances, and centralizes backups, monitoring, and security.
+n3xusDB is a from-scratch embedded time-series database built in Rust — demonstrating the core systems concepts behind production databases like Prometheus and InfluxDB, without the abstraction layer.
 
-## Design
+**Tech stack**
 
-- **WAL-first writes** — durable append log before segment flush
-- **Segment store** — time-bucketed segments with compaction
-- **Full PostgreSQL surface** — usable as a regular PG for users, configs, and entities
-- **Built-in retention** — `add_retention_policy()`-style lifecycle management
-- **Native columnar compression** — reclaims space on old time-series data
+- Rust
+- WAL
+- Segment Store
+- Compaction
+- Benchmarks
 
-## Tech stack
-
-Rust · WAL · Segment Store · PostgreSQL (TimescaleDB) · Docker Compose
+*Status: planned*
